@@ -22,7 +22,7 @@ async function createWindow() {
         webPreferences: {
             nodeIntegration: true, // is default value after Electron v5
             contextIsolation: true, // protect against prototype pollution
-            enableRemoteModule: false, // turn off remote
+            enableRemoteModule: true, // turn off remote
             preload: path.join(__dirname, "preload.js") // use a preload script
           },      
         icon: path.join(
@@ -56,16 +56,50 @@ ipcMain.on('notify', (event, data) => {
     mainWindow.webContents.on('did-finish-load', ()=> {
         mainWindow.webContents.send('fromMain', "hello");
     })
-
 });
 
 // Callback for uploading files
 ipcMain.on('upload', async (event, data) => {
     console.log('[Backend] Uploading file');
+    var filePath = undefined;
     
     // Show the file upload dialog
     // Send a HTTP POST request to /upload with the file as multipart/form-data
+    dialog.showOpenDialog( mainWindow, {
+        properties: ['openFile'],
+        filters: [ 
+            { 
+                name: 'Text Files', 
+                extensions: ['txt', 'docx', 'json'] 
+            }, ],
+    }).then(file => {
+        if (!file .canceled) {
+            filepath = file.filePaths[0].toString();
+            console.log(filepath);
+        }
+        var FormData = require('form-data');
+        const fs = require('fs'); 
+        const axios = require('axios');
 
+        if (filepath && !file.canceled) {
+            var formData = new FormData();
+            formData.append('uploadFile', fs.createReadStream(filepath));
+            const uploadResponse = async () => {
+                try {
+                    const res = await axios.post('http://localhost:8080/upload', formData,
+                    {
+                        headers:formData.getHeaders()
+                    })
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            uploadResponse();
+        }
+    }).catch(err => {
+        console.log(err);
+    })
+    
 });
 
 // Callback for downloading files
