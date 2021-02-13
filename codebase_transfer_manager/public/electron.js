@@ -105,9 +105,30 @@ ipcMain.on('upload', async (event, data) => {
 // Callback for downloading files
 ipcMain.on('download', async (event, fileInfo) => {
     console.log('[Backend] Downloading file:', fileID, 'with extension: ', fileExtension);
-    
-    // Send HTTP GET request to download the file
 
+    const Fs = require('fs');  
+    const Path = require('path'); 
+    const Axios = require('axios');
+    var FormData = require('form-data');
+
+    async function downloadFile() {
+        try {
+            const res = await axios.get('http://localhost:8080/download', {
+                reponseType: "stream"
+            })
+        } catch (err) {
+            console.error(err);
+        }
+        return new Promise((resolve, reject) => {
+            res.data.on('end', () => {
+                resolve();
+            })
+
+            res.data.on('error', () => {
+                reject();
+            })
+        })
+    }
 });
 
 /* 
