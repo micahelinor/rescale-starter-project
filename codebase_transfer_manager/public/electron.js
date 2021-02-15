@@ -80,7 +80,6 @@ ipcMain.on('upload', async (event, data) => {
         var FormData = require('form-data');
         const fs = require('fs'); 
         const axios = require('axios');
-
         if (filepath && !file.canceled) {
             var formData = new FormData();
             formData.append('uploadFile', fs.createReadStream(filepath));
@@ -104,31 +103,33 @@ ipcMain.on('upload', async (event, data) => {
 
 // Callback for downloading files
 ipcMain.on('download', async (event, fileInfo) => {
-    console.log('[Backend] Downloading file:', fileID, 'with extension: ', fileExtension);
-
+    //console.log('[Backend] Downloading file:', fileID, 'with extension: ', fileExtension);
+    console.log(fileInfo);
     const Fs = require('fs');  
     const Path = require('path'); 
     const Axios = require('axios');
-    var FormData = require('form-data');
+    
+    // async function downloadFile() {
+    //     try {
+    //         const res = await axios.get('http://localhost:8080/download', {
+    //             reponseType: "stream"
+    //         })
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+    //     const path = Path.resolve(__dirname, fileInfo);
+    //     const writer = Fs.createWriteStream();
+    //     res.data.pipe();
+    //     return new Promise((resolve, reject) => {
+    //         res.data.on('end', () => {
+    //             resolve();
+    //         })
 
-    async function downloadFile() {
-        try {
-            const res = await axios.get('http://localhost:8080/download', {
-                reponseType: "stream"
-            })
-        } catch (err) {
-            console.error(err);
-        }
-        return new Promise((resolve, reject) => {
-            res.data.on('end', () => {
-                resolve();
-            })
-
-            res.data.on('error', () => {
-                reject();
-            })
-        })
-    }
+    //         res.data.on('error', () => {
+    //             reject();
+    //         })
+    //     })
+    // }
 });
 
 /* 

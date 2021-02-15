@@ -1,8 +1,10 @@
-import React from "react";
+import React, {useState} from "react";
 import logo from "./logo.png";
 import "./App.css";
 
+
 function App() {
+    const [info, setInfo] = useState('');
     return (
         <div className="App">
             <header className="App-header">
@@ -20,6 +22,21 @@ function App() {
                 }}>
                     Upload File
                 </button>
+                <form>
+                    <input 
+                    type="text" 
+                    value={info} 
+                    onChange= {e => {
+                        setInfo(e.target.value)
+                    } }
+                    />
+                    <button onClick={() => {
+                        window.api.send('download', info);
+                    }}>
+                        Download
+                    </button>
+                </form>
+                
             </header>
         </div>
     );
