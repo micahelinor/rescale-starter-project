@@ -26,17 +26,16 @@ function App() {
                     <input
                     type="text"
                     value={info}
-                    onChange= {e => {
-                        setInfo(e.target.value)
-                    }}
+                    onChange= { e => { setInfo(e.target.value) } }
                     />
-                    <button onClick={() => {
+                    <button onClick={ e =>
+                    {
+                        e.preventDefault();
                         window.api.send('download', info);
                     }}>
                         Download
                     </button>
                 </form>
-
             </header>
         </div>
     );

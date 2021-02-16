@@ -62,8 +62,9 @@ ipcMain.on('notify', (event, data) => {
 ipcMain.on('upload', async (event, data) => {
     console.log('[Backend] Uploading file');
 
-    const axios = require('axios');
-    const fs = require('fs');
+    const Axios = require('axios');
+    const FormData = require('form-data');
+    const Fs = require('fs');
 
     // Show the file upload dialog
 
@@ -76,16 +77,14 @@ ipcMain.on('upload', async (event, data) => {
                 extensions: ['txt', 'docx', 'json'] 
             }, ],
     }).then(file => {
-        var filePath = undefined;
-        if (!file.canceled) { filepath = file.filePaths[0].toString(); }
-
-        var FormData = require('form-data');
-        if (filepath && !file.canceled) {
+        if (!file.canceled) {
+            var filepath = file.filePaths[0].toString();
             var formData = new FormData();
-            formData.append('uploadFile', fs.createReadStream(filepath));
+
+            formData.append('uploadFile', Fs.createReadStream(filepath));
             const uploadResponse = async () => {
                 try {
-                    const res = await axios.post('http://localhost:8080/upload', formData,
+                    const res = await Axios.post('http://localhost:8080/upload', formData,
                     {
                         headers:formData.getHeaders()
                     })
@@ -109,12 +108,12 @@ ipcMain.on('download', async (event, fileInfo) => {
     const Fs = require('fs');
 
     try {
-        const res = await Axios.get('http://localhost:8080/download', {
+        const response = await Axios.get('http://localhost:8080/download', {
            params: {file: fileInfo}
         })
-        Fs.writeFile('../client_file_downloads/' + fileInfo + '.txt', res.data, function (err) {
+        Fs.writeFile('../client_file_downloads/' + fileInfo + '.txt', response.data, function (err) {
             if (err) throw err;
-            console.log('File is created successfully.');
+            console.log('File was downloaded successfully.');
         });
     } catch (err) {
         console.error(err);
