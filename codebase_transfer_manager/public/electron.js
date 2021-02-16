@@ -61,8 +61,10 @@ ipcMain.on('notify', (event, data) => {
 // Callback for uploading files
 ipcMain.on('upload', async (event, data) => {
     console.log('[Backend] Uploading file');
-    var filePath = undefined;
-    
+
+    const axios = require('axios');
+    const fs = require('fs');
+
     // Show the file upload dialog
 
     // Send a HTTP POST request to /upload with the file as multipart/form-data
@@ -74,13 +76,10 @@ ipcMain.on('upload', async (event, data) => {
                 extensions: ['txt', 'docx', 'json'] 
             }, ],
     }).then(file => {
-        if (!file.canceled) {
-            filepath = file.filePaths[0].toString();
-            console.log(filepath);
-        }
+        var filePath = undefined;
+        if (!file.canceled) { filepath = file.filePaths[0].toString(); }
+
         var FormData = require('form-data');
-        const fs = require('fs'); 
-        const axios = require('axios');
         if (filepath && !file.canceled) {
             var formData = new FormData();
             formData.append('uploadFile', fs.createReadStream(filepath));
