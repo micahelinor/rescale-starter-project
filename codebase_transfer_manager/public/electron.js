@@ -93,6 +93,7 @@ ipcMain.on('upload', async (event, data) => {
                 }
             }
             uploadResponse();
+            new Notification( { title: 'Codebase Transfer Manager', body: "File Was Uploaded Successfully" } ).show();
         }
     }).catch(err => {
         console.log(err);
@@ -113,7 +114,7 @@ ipcMain.on('download', async (event, fileInfo) => {
         })
         Fs.writeFile('../client_file_downloads/' + fileInfo + '.txt', response.data, function (err) {
             if (err) throw err;
-            console.log('File was downloaded successfully.');
+            new Notification( { title: 'Codebase Transfer Manager', body: "File Was Downloaded Successfully" } ).show();
         });
     } catch (err) {
         console.error(err);
