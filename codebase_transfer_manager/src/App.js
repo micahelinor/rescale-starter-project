@@ -23,12 +23,12 @@ function App() {
                     Upload File
                 </button>
                 <form>
-                    <input 
-                    type="text" 
-                    value={info} 
+                    <input
+                    type="text"
+                    value={info}
                     onChange= {e => {
                         setInfo(e.target.value)
-                    } }
+                    }}
                     />
                     <button onClick={() => {
                         window.api.send('download', info);
@@ -36,7 +36,7 @@ function App() {
                         Download
                     </button>
                 </form>
-                
+
             </header>
         </div>
     );

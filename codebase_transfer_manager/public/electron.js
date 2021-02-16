@@ -64,6 +64,7 @@ ipcMain.on('upload', async (event, data) => {
     var filePath = undefined;
     
     // Show the file upload dialog
+
     // Send a HTTP POST request to /upload with the file as multipart/form-data
     dialog.showOpenDialog( mainWindow, {
         properties: ['openFile'],
@@ -73,7 +74,7 @@ ipcMain.on('upload', async (event, data) => {
                 extensions: ['txt', 'docx', 'json'] 
             }, ],
     }).then(file => {
-        if (!file .canceled) {
+        if (!file.canceled) {
             filepath = file.filePaths[0].toString();
             console.log(filepath);
         }
@@ -103,33 +104,22 @@ ipcMain.on('upload', async (event, data) => {
 
 // Callback for downloading files
 ipcMain.on('download', async (event, fileInfo) => {
-    //console.log('[Backend] Downloading file:', fileID, 'with extension: ', fileExtension);
-    console.log(fileInfo);
-    const Fs = require('fs');  
-    const Path = require('path'); 
-    const Axios = require('axios');
-    
-    // async function downloadFile() {
-    //     try {
-    //         const res = await axios.get('http://localhost:8080/download', {
-    //             reponseType: "stream"
-    //         })
-    //     } catch (err) {
-    //         console.error(err);
-    //     }
-    //     const path = Path.resolve(__dirname, fileInfo);
-    //     const writer = Fs.createWriteStream();
-    //     res.data.pipe();
-    //     return new Promise((resolve, reject) => {
-    //         res.data.on('end', () => {
-    //             resolve();
-    //         })
+//    console.log('[Backend] Downloading file:', fileID, 'with extension: ', fileExtension);
 
-    //         res.data.on('error', () => {
-    //             reject();
-    //         })
-    //     })
-    // }
+    const Axios = require('axios');
+    const Fs = require('fs');
+
+    try {
+        const res = await Axios.get('http://localhost:8080/download', {
+           params: {file: fileInfo}
+        })
+        Fs.writeFile('../client_file_downloads/' + fileInfo + '.txt', res.data, function (err) {
+            if (err) throw err;
+            console.log('File is created successfully.');
+        });
+    } catch (err) {
+        console.error(err);
+    }
 });
 
 /* 
